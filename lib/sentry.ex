@@ -118,14 +118,19 @@ defmodule Sentry do
   @spec capture_exception(Exception.t, Keyword.t) :: task
   def capture_exception(exception, opts \\ []) do
     filter_module = Application.get_env(:sentry, :filter, Sentry.DefaultEventFilter)
+    |> IO.inspect(label: "filter_module")
     {source, opts} = Keyword.pop(opts, :event_source)
+    |> IO.inspect(label: "event_source")
 
     if filter_module.exclude_exception?(exception, source) do
-      :excluded
+      :excluded |> IO.inspect(label: "exclude_exception")
     else
       exception
+      |> IO.inspect(label: "exception")
       |> Event.transform_exception(opts)
+      |> IO.inspect(label: "transform_exception")
       |> send_event()
+      |> IO.inspect(label: "send_event")
     end
   end
 
