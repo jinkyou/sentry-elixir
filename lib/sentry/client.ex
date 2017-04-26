@@ -41,6 +41,7 @@ defmodule Sentry.Client do
   """
   @spec send_event(Event.t) :: {:ok, Task.t} | :error
   def send_event(%Event{} = event) do
+    IO.inspect "wow"
     {endpoint, public_key, secret_key} = get_dsn!()
 
     auth_headers = authorization_headers(public_key, secret_key)
@@ -124,6 +125,7 @@ defmodule Sentry.Client do
   @spec get_dsn! :: get_dsn
   def get_dsn! do
     # {PROTOCOL}://{PUBLIC_KEY}:{SECRET_KEY}@{HOST}/{PATH}{PROJECT_ID}
+    IO.inspect(fetch_dsn(), label: "fetch_dsn")
     %URI{userinfo: userinfo, host: host, port: port, path: path, scheme: protocol} = URI.parse(fetch_dsn())
     [public_key, secret_key] = String.split(userinfo, ":", parts: 2)
     [_, binary_project_id] = String.split(path, "/")

@@ -24,25 +24,17 @@ defmodule Sentry.Logger do
   def handle_event({:error_report, _gl, {_pid, _type, [message | _]}}, state) when is_list(message) do
     try do
       {kind, exception, stacktrace, module} = get_exception_and_stacktrace(message[:error_info])
-                                      |> IO.inspect(label: "get_exception_and_stacktrace")
                                       |> get_initial_call_and_module(message)
-                                      |> IO.inspect(label: "get_initial_call_and_module")
 
       opts = get_in(message, ~w[dictionary sentry_context]a) || %{}
-             |> IO.inspect(label: "get_in")
              |> Map.take(Sentry.Context.context_keys)
-             |> IO.inspect(label: "take")
              |> Map.to_list()
-             |> IO.inspect(label: "to_list")
              |> Keyword.put(:event_source, :logger)
-             |> IO.inspect(label: "event_source")
              |> Keyword.put(:stacktrace, stacktrace)
-             |> IO.inspect(label: "stacktrace")
              |> Keyword.put(:error_type, kind)
-             |> IO.inspect(label: "error_type")
              |> Keyword.put(:module, module)
-             |> IO.inspect(label: "module")
 
+      IO.inspect("what")
       Sentry.capture_exception(exception, opts)
              |> IO.inspect(label: "capture_exception")
     rescue ex ->
